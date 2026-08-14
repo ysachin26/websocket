@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "react-router-dom": "^7.18.2",
     "websocket": "^1.0.35",
     "ws": "^8.21.3"
   }
