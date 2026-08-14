@@ -1,8 +1,11 @@
+ 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { GenerateRoomCode } from "../utility/GenerateRoomCode";
 
 export function JoinPage() {
   const [roomCode, setRoomCode] = useState("");
+  const [genCode, setGenCode] = useState("");
   const navigate = useNavigate();
 
   const joinRoom = () => {
@@ -12,15 +15,42 @@ export function JoinPage() {
     navigate("/chat", { state: { roomId } });
   };
 
+   
+  const createRoom = () =>
+  {
+    const code = GenerateRoomCode();
+    setGenCode(code);
+ 
+     
+  }
   return (
-    <div style={{ display: "flex", gap: "10px" }}>
-      <input
+    <div className="flex flex-col h-screen justify-center items-center p-4 m-4">
+     
+     <div className="">
+      
+     
+      <p>Join the room and have fun</p>
+      <div className="flex">
+<div className="rounded bg-black-200">
+        <input  className="px-[30px] py-[15px] roundedy-[10px]" 
         type="text"
         placeholder="enter room id"
         value={roomCode}
         onChange={(e) => setRoomCode(e.target.value)}
       />
-      <button onClick={joinRoom}>Join</button>
+       </div>
+     <div>
+
+    
+      <button className="px-[30px] py-[15px] rounded-lg" onClick={joinRoom}>Join</button>
     </div>
+      </div>
+         </div> 
+
+         <button onClick={createRoom}>
+          create a rooms
+         </button>
+         <span>{genCode}</span>
+     </div> 
   );
 }

@@ -70,7 +70,7 @@ export function ChatRoom() {
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             placeholder="type message..."
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg"
+            className="flex-1 px-[4px] py-[2px] border border-gray-300 rounded-lg"
             onKeyDown={(e) => {
               if (e.key === "Enter") sendMessage();
             }}
