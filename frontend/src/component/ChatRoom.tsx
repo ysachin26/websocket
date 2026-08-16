@@ -1,10 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import socket from "../socket";
 
 export function ChatRoom() {
   const location = useLocation();
-  const socketRef = useRef<WebSocket | null>(null);
   const [displayMessage, setDisplayMessage] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState("");
 
@@ -13,10 +12,7 @@ export function ChatRoom() {
   useEffect(() => {
     if (!roomId) return;
 
-   
-    socketRef.current = socket;
-
-    socket.onopen = () => {
+    const handleOpen = () => {
       socket.send(
         JSON.stringify({
           type: "join",
@@ -25,20 +21,28 @@ export function ChatRoom() {
       );
     };
 
-    socket.onmessage = (event) => {
+    const handleMessage = (event: MessageEvent) => {
       setDisplayMessage((prev) => [...prev, event.data]);
     };
 
+    if (socket.readyState === WebSocket.OPEN) {
+      handleOpen();
+    } else {
+      socket.addEventListener("open", handleOpen, { once: true });
+    }
+
+    socket.addEventListener("message", handleMessage);
+
     return () => {
-      socket.close();
+      socket.removeEventListener("open", handleOpen);
+      socket.removeEventListener("message", handleMessage);
     };
   }, [roomId]);
 
   const sendMessage = () => {
-    const socket = socketRef.current;
     const trimmed = inputValue.trim();
 
-    if (!socket || !trimmed || !roomId) return;
+    if (!trimmed || !roomId) return;
 
     socket.send(
       JSON.stringify({
