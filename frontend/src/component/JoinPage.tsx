@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { GenerateRoomCode } from "../utility/GenerateRoomCode";
+import socket from "../socket";
 
 
 export function JoinPage() {
@@ -21,7 +22,7 @@ export function JoinPage() {
   {
     const code = GenerateRoomCode();
     setGenCode(code);
-    const socket = new WebSocket("ws://localhost:8080")
+   
 
     socket.onopen=()=>
     {

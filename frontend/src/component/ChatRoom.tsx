@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
+import socket from "../socket";
 
 export function ChatRoom() {
   const location = useLocation();
@@ -12,7 +13,7 @@ export function ChatRoom() {
   useEffect(() => {
     if (!roomId) return;
 
-    const socket = new WebSocket("ws://localhost:8080");
+   
     socketRef.current = socket;
 
     socket.onopen = () => {
