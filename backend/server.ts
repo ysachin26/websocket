@@ -63,6 +63,28 @@ wss.on("connection",(socket)=>
                     //send to all person with same room id
 
 
+                }else if(parsedMessage.type==='create_room')
+                {
+                   //check does room id already exist
+                   //if not then push if exist throw error
+
+                   if(!socketAll.find(parsedMessage.payload.code))
+                   {
+                        socketAll.push(
+                        {
+                        socket:socket,
+                        roomId:parsedMessage.payload.code
+                        }
+                        
+                    );
+                   }
+                   else{
+                    //throw error room already exist
+                    socket.send(
+                        "room already exist"
+                    )
+                   }
+                   
                 }
         }
         catch(error)

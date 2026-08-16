@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "dgram": "^1.0.1",
     "nanoid": "^5.1.16",
     "react-router-dom": "^7.18.2",
     "websocket": "^1.0.35",

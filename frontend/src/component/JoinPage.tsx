@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { GenerateRoomCode } from "../utility/GenerateRoomCode";
 
+
 export function JoinPage() {
   const [roomCode, setRoomCode] = useState("");
   const [genCode, setGenCode] = useState("");
@@ -20,8 +21,21 @@ export function JoinPage() {
   {
     const code = GenerateRoomCode();
     setGenCode(code);
- 
+    const socket = new WebSocket("ws://localhost:8080")
+
+    socket.onopen=()=>
+    {
+      socket.send(
+         JSON.stringify({
+          type: "create_room",
+          payload: { code },
+        })
+      )
+    }
+
      
+    
+    
   }
   return (
     <div className="flex flex-col h-screen justify-center items-center p-4 m-4">
