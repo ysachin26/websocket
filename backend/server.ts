@@ -27,6 +27,7 @@ wss.on("connection",(socket)=>
                 {
                    if (!socketAll.some((user) => user.roomId === parsedMessage.payload.roomId)) {
     socket.send("room does not exist");
+    
     return;
 }
 
