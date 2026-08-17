@@ -17,14 +17,14 @@ export function JoinPage() {
   };
 
   const createRoom = () => {
-    const code = GenerateRoomCode();
-    setGenCode(code);
+    const roomId = GenerateRoomCode();
+    setGenCode(roomId);
 
     const sendCreateRoom = () => {
       socket.send(
         JSON.stringify({
           type: "create_room",
-          payload: { code },
+          payload: { roomId },
         })
       );
     };

@@ -9,7 +9,7 @@ interface User
     socket:WebSocket
     roomId:string
 }
-const socketAll : User[] = [];
+let socketAll : User[] = [];
 
 wss.on("connection",(socket)=>
 {
@@ -25,14 +25,16 @@ wss.on("connection",(socket)=>
             
                 if(parsedMessage.type ==='join')
                 {
-                    console.log("user under join")
-                    socketAll.push(
-                        {
-                        socket:socket,
-                        roomId:parsedMessage.payload.roomId
-                        }
-                        
-                    );
+                   if (!socketAll.some((user) => user.roomId === parsedMessage.payload.roomId)) {
+    socket.send("room does not exist");
+    return;
+}
+
+socketAll.push({
+    socket,
+    roomId: parsedMessage.payload.roomId
+});
+                
 
                      console.log("User joined:", parsedMessage.payload.roomId);
                      socket.send("user joined"+ parsedMessage.payload.roomId);
@@ -63,17 +65,18 @@ wss.on("connection",(socket)=>
                     //send to all person with same room id
 
 
-                }else if(parsedMessage.type==='create_room')
+                }
+                else if(parsedMessage.type==='create_room')
                 {
                    //check does room id already exist
                    //if not then push if exist throw error
 
-                   if(!socketAll.find(parsedMessage.payload.code))
+                   if(!socketAll.some((e) => e.roomId === parsedMessage.payload.roomId))
                    {
                         socketAll.push(
                         {
                         socket:socket,
-                        roomId:parsedMessage.payload.code
+                        roomId:parsedMessage.payload.roomId
                         }
                         
                     );
@@ -86,12 +89,44 @@ wss.on("connection",(socket)=>
                    }
                    
                 }
+                else if(parsedMessage.type==='leave_room')
+                {
+                     //extract the roomid 
+                     const roomId = parsedMessage?.payload?.roomId;
+
+                     if(!roomId)
+                        {
+                            socket.send("roomId is required")
+                            return;
+                        } 
+
+                        const before = socketAll.length
+
+                        //remove from specific room
+                        socketAll = socketAll.filter(
+                            (user)=>!(user.socket===socket && user.roomId===roomId)
+
+                        );
+                         if (socketAll.length === before) {
+    socket.send("you are not in this room");
+    return;
+  }
+
+  socket.send("left room " + roomId);
+  console.log("User left:", roomId);
+
+                }
         }
         catch(error)
         {
             console.log("invalid message" + error)
         }
         
+    })
+
+    socket.on("close",()=>
+    {
+        socketAll = socketAll.filter((e)=>e.socket!=socket);
     })
 
 })

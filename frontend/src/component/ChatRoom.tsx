@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import socket from "../socket";
 
 export function ChatRoom() {
   const location = useLocation();
   const [displayMessage, setDisplayMessage] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState("");
-
+const navigate = useNavigate();
   const roomId = (location.state as { roomId?: string } | null)?.roomId;
 
   useEffect(() => {
@@ -57,10 +57,26 @@ export function ChatRoom() {
     setInputValue("");
   };
 
+
+  function leaveroom()
+  {
+       socket.send(
+      JSON.stringify({
+        type: "leave_room",
+        payload: {
+          roomId:roomId
+        },
+      })
+    );
+      navigate("/join")
+  }
+
   if (!roomId) return <div>Invalid room access.</div>;
+ 
 
   return (
     <div className="flex items-center justify-center">
+    
       <div className="flex flex-col h-screen w-[600px]">
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           {displayMessage.map((msg, index) => (
@@ -81,6 +97,7 @@ export function ChatRoom() {
             }}
           />
           <button onClick={sendMessage}>Send</button>
+          <div> <button onClick={leaveroom}>leave room</button></div>
         </div>
       </div>
     </div>
